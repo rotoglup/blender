@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+#define DEBUG_DISABLE_SYNC_TASK_POOL 0    /* FIXME(nll) Remove debug code */
+
 #include "render/curves.h"
 #include "render/hair.h"
 #include "render/mesh.h"
@@ -136,11 +138,16 @@ Geometry *BlenderSync::sync_geometry(BL::Depsgraph &b_depsgraph,
 
   geom->name = ustring(b_ob_data.name().c_str());
 
+
+#if !DEBUG_DISABLE_SYNC_TASK_POOL
+
   /* Defer the actual geometry sync to the task_pool for multithreading */
   task_pool.push([=]() mutable {
 
     if (progress.get_cancel())
       return;
+
+#endif
 
     progress.set_sync_status("Synchronizing object", b_ob.name());
 
@@ -157,7 +164,11 @@ Geometry *BlenderSync::sync_geometry(BL::Depsgraph &b_depsgraph,
       sync_mesh(b_depsgraph, b_ob, mesh, used_shaders);
     }
 
+#if !DEBUG_DISABLE_SYNC_TASK_POOL
+
   });
+
+#endif
 
   return geom;
 }
@@ -188,11 +199,15 @@ void BlenderSync::sync_geometry_motion(BL::Depsgraph &b_depsgraph,
     return;
   }
 
+#if !DEBUG_DISABLE_SYNC_TASK_POOL
+
   /* Defer the actual geometry sync to the task_pool for multithreading */
   task_pool.push([=]() mutable {
 
     if (progress.get_cancel())
       return;
+
+#endif
 
     if (b_ob.type() == BL::Object::type_HAIR || use_particle_hair) {
       Hair* hair = static_cast<Hair*>(geom);
@@ -205,7 +220,10 @@ void BlenderSync::sync_geometry_motion(BL::Depsgraph &b_depsgraph,
       Mesh* mesh = static_cast<Mesh*>(geom);
       sync_mesh_motion(b_depsgraph, b_ob, mesh, motion_step);
     }
+
+#if !DEBUG_DISABLE_SYNC_TASK_POOL
   });
+#endif
 }
 
 CCL_NAMESPACE_END

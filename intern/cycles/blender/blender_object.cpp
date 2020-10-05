@@ -344,6 +344,8 @@ void BlenderSync::sync_objects(BL::Depsgraph &b_depsgraph,
                                BL::SpaceView3D &b_v3d,
                                float motion_time)
 {
+  scoped_timer timer;
+
   /* Threads, used for geometry syncs */
   TaskPool geom_task_pool;
 
@@ -417,7 +419,11 @@ void BlenderSync::sync_objects(BL::Depsgraph &b_depsgraph,
     cancel = progress.get_cancel();
   }
 
+  /* FIXME(nll) Remove debug message */ std::cerr << "  object_instances iteration: " << timer.get_time() << std::endl;
+
   geom_task_pool.wait_work();
+
+  /* FIXME(nll) Remove debug message */ std::cerr << "  geometry_sync finished: " << timer.get_time() << std::endl;
 
   progress.set_sync_status("");
 
@@ -433,6 +439,8 @@ void BlenderSync::sync_objects(BL::Depsgraph &b_depsgraph,
 
   if (motion)
     geometry_motion_synced.clear();
+
+  /* FIXME(nll) Remove debug message */ std::cerr << "Time spent synchronizing objects: " << timer.get_time() << std::endl;
 }
 
 void BlenderSync::sync_motion(BL::RenderSettings &b_render,
