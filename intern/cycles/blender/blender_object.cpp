@@ -419,11 +419,11 @@ void BlenderSync::sync_objects(BL::Depsgraph &b_depsgraph,
     cancel = progress.get_cancel();
   }
 
-  /* FIXME(nll) Remove debug message */ std::cerr << "  object_instances iteration: " << timer.get_time() << std::endl;
+  /* FIXME(nll) Remove debug message */ std::cerr << "SyncObjectsIteration;" << timer.get_time() << std::endl;
 
   geom_task_pool.wait_work();
 
-  /* FIXME(nll) Remove debug message */ std::cerr << "  geometry_sync finished: " << timer.get_time() << std::endl;
+  /* FIXME(nll) Remove debug message */ std::cerr << "SyncObjectsGeometryEnd;" << timer.get_time() << std::endl;
 
   progress.set_sync_status("");
 
@@ -440,7 +440,7 @@ void BlenderSync::sync_objects(BL::Depsgraph &b_depsgraph,
   if (motion)
     geometry_motion_synced.clear();
 
-  /* FIXME(nll) Remove debug message */ std::cerr << "Time spent synchronizing objects: " << timer.get_time() << std::endl;
+  /* FIXME(nll) Remove debug message */ std::cerr << "SyncObjectsTotal;" << timer.get_time() << std::endl;
 }
 
 void BlenderSync::sync_motion(BL::RenderSettings &b_render,
