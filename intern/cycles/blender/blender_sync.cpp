@@ -246,6 +246,13 @@ void BlenderSync::sync_data(BL::RenderSettings &b_render,
 
   free_data_after_sync(b_depsgraph);
 
+#if 0     // BENCHMARK FIXME(nll) remove this
+
+  std::cerr << "SyncTotal;" << timer.get_time() << std::endl;
+  exit(0);
+
+#endif
+
   VLOG(1) << "Total time spent synchronizing data: " << timer.get_time();
 }
 
